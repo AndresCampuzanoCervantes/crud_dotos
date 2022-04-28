@@ -1,10 +1,11 @@
-import ModalRegistar from './components/ModalRegistar';
-
+import React from 'react'
+import Formularization from './components/Formulario'
 
 function App() {
+  
   return (
     < >
-      
+      <Formularization/>
     </>
   );
 }
