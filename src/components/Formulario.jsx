@@ -125,9 +125,9 @@ const Formulario = () => {
                   <td className="text-center">{item.phone}</td>
                   <td className="text-center">{item.price}</td>
                   <td className="text-center">
-                    <button className="btn btn-success btn-sm mx-2 px-2 fw-bold" onClick={() => { handleModalEstado(item) }}>Comprar</button>
-                    <button className="btn btn-warning btn-sm mx-2 px-3 fw-bold" onClick={() => { handelModalEditar(item) }}>Editar</button>
-                    <button className="btn btn-danger btn-sm mx-2 px-2 fw-bold" onClick={() => { handleModalEliminar(item)}}>Eliminar</button>
+                    <button className="btn btn-success btn-sm mx-1 px-2 fw-bold" onClick={() => { handleModalEstado(item) }}>Comprar</button>
+                    <button className="btn btn-warning btn-sm mx-1 px-3 fw-bold" onClick={() => { handelModalEditar(item) }}>Editar</button>
+                    <button className="btn btn-danger btn-sm mx-1 px-2 fw-bold" onClick={() => { handleModalEliminar(item)}}>Eliminar</button>
                   </td>
                   <td className="text-center">
                     <a href={'#' + item.name} onClick={(e) => { handleModalImage(e, item.imagen) }}>Ver</a>
