@@ -1,7 +1,7 @@
 import React from 'react'
-import { Modal,Button } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 
-const ModalImagen = ({showModal,handleModal,Imagen}) => {
+const ModalImagen = ({ showModal, handleModal, Imagen }) => {
 
     return (
         <>
@@ -10,7 +10,7 @@ const ModalImagen = ({showModal,handleModal,Imagen}) => {
                     <h5>Imagen</h5>
                 </Modal.Header>
                 <Modal.Body>
-                    <img id="imagen" src={Imagen} alt="Imagen" className="mx-auto d-block"/>
+                    <img id="imagen" src={Imagen} alt="Imagen" className="mx-auto d-block" />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={handleModal} className="btn-danger">Cerrar</Button>
