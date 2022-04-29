@@ -1,20 +1,21 @@
 import React from 'react'
-import ModalRegistar from './ModalRegistar';
+import ModalDatos from './ModalDatos';
 import ModalImagen from './ModalImagen';
-import ModalComprar from './ModalComprar';
-import ModalEliminar from './ModalEliminar';
-import { firebase } from '../firebase'
+import ModalEstados from './ModalEstados';
+import {firebase} from '../firebase'
 
 const Formulario = () => {
-  const [showModalCrear, setShowModalCrear] = React.useState(false);
+  const [showModalDatos, setShowModalDatos] = React.useState(false);
   const [showModalImagen, setShowModalImagen] = React.useState(false);
-  const [showModalComprar,setModalComprar] = React.useState(false);
-  const [showModalEliminar,setModalEliminar] = React.useState(false);
+  const [showModalEstados,setShowModalEstados] = React.useState(false);
+  const [modoEliminar,setModoEliminar] = React.useState(false);
+  const [modoEditar,setModoEditar] = React.useState(false);
   const [urlImagen, setUrlImagen] = React.useState("");
   const [listaFotosVenta, setListaFotosVenta] = React.useState([]);
+  const [imagenEstado,setImagenEstado] = React.useState({});
+  const [imegenEditar,setImegenEditar] = React.useState({});
   const [creados, setCreados] = React.useState(0);
-  const [imgenComprada,setImagenComprada] = React.useState({});
-  const [imagenEliminar,setImagenEliminar] = React.useState({});
+  
 
   React.useEffect(() => {
     const obtenerDatos = async () => {
@@ -35,7 +36,11 @@ const Formulario = () => {
   }, [creados])
 
   const handleModalCrear = () => {
-    setShowModalCrear(!showModalCrear);
+    setShowModalDatos(!showModalDatos);
+    setModoEditar(false)
+    if (imegenEditar!== undefined) {
+      setImegenEditar({})
+    }
   }
   const handleModalImage = (e, url) => {
     if (e !== undefined) {
@@ -45,60 +50,65 @@ const Formulario = () => {
     setShowModalImagen(!showModalImagen);
   }
 
-  const handleModalComprar = async (imagen) => {
+  const handleModalEstado =  (imagen) => {
     if (imagen!== undefined) {
-      setImagenComprada(imagen)
+      setImagenEstado(imagen)
     }
-    setModalComprar(!showModalComprar)
+    setShowModalEstados(!showModalEstados)
+
+    if (modoEliminar) {
+      setModoEliminar(!modoEliminar)
+    }
   }
 
-  const handleModalEliminar = async (imagen) => {
-    if (imagen!== undefined) {
-      setImagenEliminar(imagen)
-    }
-    setModalEliminar(!showModalEliminar)
+  const handleModalEliminar =  (imagen) => {
+    setModoEliminar(!modoEliminar)
+    handleModalEstado(imagen)
+    
   }
 
+  const handelModalEditar = async (imagen) => {
+    setModoEditar(!modoEditar)
+    setShowModalDatos(!showModalDatos);
+    setImegenEditar(imagen)
+  }
 
   return (
     <div className="container">
       <h1 className="text-center mt-4">Crud de Fotos</h1>
-      <ModalRegistar
-        showModal={showModalCrear}
+      <ModalDatos
+        showModal={showModalDatos}
         handleModal={handleModalCrear}
         creados={creados}
         setCreados={setCreados}
+        modoEdicion={modoEditar}
+        fotoEditar={imegenEditar}
       />
       <ModalImagen
         showModal={showModalImagen}
         handleModal={handleModalImage}
         Imagen={urlImagen}
       />
-      <ModalComprar
-      showModal={showModalComprar}
-      handleModal={handleModalComprar}
-      Imagen={imgenComprada}
+      <ModalEstados
+      showModal={showModalEstados}
+      handleModal={handleModalEstado}
+      Imagen={imagenEstado}
       creados={creados}
       setCreados={setCreados} 
+      modoEliminar={modoEliminar}
         />
-      <ModalEliminar
-        showModal={showModalEliminar}
-        handleModal={handleModalEliminar}
-        Imagen={imagenEliminar}
-        creados={creados}
-        setCreados={setCreados}  
-      />
+      
       <button onClick={handleModalCrear} className="btn btn-primary float-end fw-bold mx-2 my-2">Registrar Imagen</button>
       <div className="row col-12 my-2 py-2">
         <table className="table">
           <thead className="table-dark">
             <tr>
-              <th className="col">#</th>
-              <th className="col">Nombre</th>
-              <th className="col">Ubicacion</th>
-              <th className="col">Autor</th>
-              <th className="col">Teléfono</th>
-              <th className="col">Valor</th>
+              <th className="col text-center">#</th>
+              <th className="col text-center">Nombre</th>
+              <th className="col text-center">Ubicacion</th>
+              <th className="col text-center">Autor</th>
+              <th className="col text-center">Teléfono</th>
+              <th className="col text-center">Valor</th>
               <th className="col-3 text-center">Acciones</th>
               <th className="col-1"></th>
             </tr>
@@ -109,17 +119,17 @@ const Formulario = () => {
               (
                 <tr className={(index + 1) % 2 === 0 ? 'table-active' : ''} key={item.id}>
                   <td className="fw-bold">{index + 1}</td>
-                  <td>{item.name}</td>
-                  <td>{item.location}</td>
-                  <td>{item.author}</td>
-                  <td>{item.phone}</td>
-                  <td>{item.price}</td>
-                  <td>
-                    <button className="btn btn-success btn-sm mx-2  fw-bold" onClick={() => { handleModalComprar(item) }}>Comprar</button>
-                    <button className="btn btn-warning btn-sm mx-2  fw-bold">Editar</button>
-                    <button className="btn btn-danger btn-sm mx-2  fw-bold" onClick={() => { handleModalEliminar(item)}}>Eliminar</button>
+                  <td className="text-center">{item.name}</td>
+                  <td className="text-center">{item.location}</td>
+                  <td className="text-center">{item.author}</td>
+                  <td className="text-center">{item.phone}</td>
+                  <td className="text-center">{item.price}</td>
+                  <td className="text-center">
+                    <button className="btn btn-success btn-sm mx-2 px-2 fw-bold" onClick={() => { handleModalEstado(item) }}>Comprar</button>
+                    <button className="btn btn-warning btn-sm mx-2 px-3 fw-bold" onClick={() => { handelModalEditar(item) }}>Editar</button>
+                    <button className="btn btn-danger btn-sm mx-2 px-2 fw-bold" onClick={() => { handleModalEliminar(item)}}>Eliminar</button>
                   </td>
-                  <td>
+                  <td className="text-center">
                     <a href={'#' + item.name} onClick={(e) => { handleModalImage(e, item.imagen) }}>Ver</a>
                   </td>
                 </tr>

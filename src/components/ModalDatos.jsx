@@ -2,13 +2,14 @@ import React from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { firebase } from '../firebase'
 
-const ModalRegistar = ({ showModal, handleModal, creados, setCreados}) => {
+const ModalDatos= ({ showModal, handleModal, creados, setCreados, modoEdicion, fotoEditar}) => {
     const [imageRandom, setImageRandom] = React.useState("");
     const [name, setName] = React.useState("");
     const [location, setLocation] = React.useState("");
     const [author, setAuthor] = React.useState("");
     const [phone, setPhone] = React.useState("");
     const [price, setPrice] = React.useState("");
+    const [id,setId] = React.useState("");
     const [error, setError] = React.useState("");
 
     React.useEffect(() => {
@@ -20,10 +21,27 @@ const ModalRegistar = ({ showModal, handleModal, creados, setCreados}) => {
                 console.error(error);
             }
         }
-        if (showModal) {
-            optenerImagen();
+        const iniciarModoEdicion=()=> {
+            if (fotoEditar===undefined) {
+                setError('Debe Los datos del registro seleccionado no se encuentra')
+                return;
+            }
+            setImageRandom(fotoEditar.imagen)
+            setName(fotoEditar.name)
+            setLocation(fotoEditar.location)
+            setAuthor(fotoEditar.author)
+            setPhone(fotoEditar.phone)
+            setPrice(fotoEditar.price)
+            setId(fotoEditar.id)
         }
-    }, [showModal])
+        if (showModal) {
+            if (!modoEdicion) {
+                optenerImagen();
+            }else{
+                iniciarModoEdicion();
+            }
+        }
+    }, [showModal,modoEdicion,fotoEditar])
 
     const soloNumeros = (e) => {
         const key = e.charCode;
@@ -99,6 +117,62 @@ const ModalRegistar = ({ showModal, handleModal, creados, setCreados}) => {
         }
     }
 
+    const EditarImagen = async () => {
+        if (!imageRandom.trim()) {
+            setError('Error al Cargar la imagen')
+            return;
+        }
+        if (!name.trim()) {
+            setError('Debe digitar el nombre de la fotografia')
+            return;
+        }
+        if (!location.trim()) {
+            setError('Debe Ingresar el lugar donde se tomo la foto')
+            return;
+        }
+        if (!author.trim()) {
+            setError('Debe ingresar el autor de la foto')
+            return;
+        }
+        if (!phone.trim()) {
+            setError('Debe ingresar el numero de telefono del autor')
+            return;
+        }
+        if (!price.replaceAll('$', '').trim()) {
+            setError('Debe ingersar el precio de la foto')
+            return;
+        }
+        if (fotoEditar===undefined) {
+            setError('Debe Los datos del registro seleccionado no se encuentra')
+            return;
+        }
+        setError('')
+        try {
+            const newImagen = {
+                name,
+                location,
+                author,
+                phone,
+                price,
+                imagen: imageRandom,
+                sold: false
+            }
+            const db = firebase.firestore();
+            await db.collection('ListaFotosVenta').doc(id).update(newImagen);
+
+            setCreados(creados + 1)
+            setName('')
+            setLocation('')
+            setAuthor('')
+            setPhone('')
+            setPrice('')
+            setImageRandom('')
+            setId('')
+            handleModal()
+        } catch (error) {
+            console.error(error)
+        }
+    }
     const cancelar = () => {
         setError('')
         setName('')
@@ -111,10 +185,11 @@ const ModalRegistar = ({ showModal, handleModal, creados, setCreados}) => {
     }
     return (
         <>
-
             <Modal show={showModal} onHide={cancelar}>
                 <Modal.Header closeButton>
-                    <h5 className="title">Registro de Imagen</h5>
+                    <h5 className="title">
+                        {!modoEdicion?'Registro de Imagen':'Editar Imagen'}
+                    </h5>
                 </Modal.Header>
                 <Modal.Body>
                     {
@@ -175,12 +250,22 @@ const ModalRegistar = ({ showModal, handleModal, creados, setCreados}) => {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={registrarImagen}>Registrar</Button>
-                    <Button onClick={cancelar} className="btn-danger">Cancelar</Button>
+                    {
+                        !modoEdicion?
+                            (<>
+                                <Button onClick={registrarImagen} className="mx-2 px-3">Registrar</Button>
+                                <Button onClick={cancelar} className="btn-dark mx-2 px-3">Cancelar</Button>
+                            </>)
+                        : 
+                            (<>
+                                <Button onClick={EditarImagen} className="btn-warning px-4 mx-2">Editar</Button>
+                                <Button onClick={cancelar} className="btn-dark mx-2">Cancelar</Button>
+                            </>)
+                    }
                 </Modal.Footer>
             </Modal>
         </>
     )
 }
 
-export default ModalRegistar
+export default ModalDatos
