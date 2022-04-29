@@ -2,16 +2,19 @@ import React from 'react'
 import ModalRegistar from './ModalRegistar';
 import ModalImagen from './ModalImagen';
 import ModalComprar from './ModalComprar';
+import ModalEliminar from './ModalEliminar';
 import { firebase } from '../firebase'
 
 const Formulario = () => {
   const [showModalCrear, setShowModalCrear] = React.useState(false);
   const [showModalImagen, setShowModalImagen] = React.useState(false);
   const [showModalComprar,setModalComprar] = React.useState(false);
+  const [showModalEliminar,setModalEliminar] = React.useState(false);
   const [urlImagen, setUrlImagen] = React.useState("");
   const [listaFotosVenta, setListaFotosVenta] = React.useState([]);
   const [creados, setCreados] = React.useState(0);
   const [imgenComprada,setImagenComprada] = React.useState({});
+  const [imagenEliminar,setImagenEliminar] = React.useState({});
 
   React.useEffect(() => {
     const obtenerDatos = async () => {
@@ -49,6 +52,14 @@ const Formulario = () => {
     setModalComprar(!showModalComprar)
   }
 
+  const handleModalEliminar = async (imagen) => {
+    if (imagen!== undefined) {
+      setImagenEliminar(imagen)
+    }
+    setModalEliminar(!showModalEliminar)
+  }
+
+
   return (
     <div className="container">
       <h1 className="text-center mt-4">Crud de Fotos</h1>
@@ -70,6 +81,13 @@ const Formulario = () => {
       creados={creados}
       setCreados={setCreados} 
         />
+      <ModalEliminar
+        showModal={showModalEliminar}
+        handleModal={handleModalEliminar}
+        Imagen={imagenEliminar}
+        creados={creados}
+        setCreados={setCreados}  
+      />
       <button onClick={handleModalCrear} className="btn btn-primary float-end fw-bold mx-2 my-2">Registrar Imagen</button>
       <div className="row col-12 my-2 py-2">
         <table className="table">
@@ -99,7 +117,7 @@ const Formulario = () => {
                   <td>
                     <button className="btn btn-success btn-sm mx-2  fw-bold" onClick={() => { handleModalComprar(item) }}>Comprar</button>
                     <button className="btn btn-warning btn-sm mx-2  fw-bold">Editar</button>
-                    <button className="btn btn-danger btn-sm mx-2  fw-bold">Eliminar</button>
+                    <button className="btn btn-danger btn-sm mx-2  fw-bold" onClick={() => { handleModalEliminar(item)}}>Eliminar</button>
                   </td>
                   <td>
                     <a href={'#' + item.name} onClick={(e) => { handleModalImage(e, item.imagen) }}>Ver</a>
