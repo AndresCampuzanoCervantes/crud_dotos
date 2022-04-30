@@ -1,0 +1,3 @@
+Repositorio: https://github.com/AndresCampuzanoCervantes/crud_fotos/tree/develop
+Netlify: https://crud-fotos.netlify.app/
+Amplify: https://main.d1e98vzmzpq4y8.amplifyapp.com/
